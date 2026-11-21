@@ -46,15 +46,18 @@ detect_os_arch
 
 ## Update & Install dependencies
 echo -e "\n\nInstalling dependencies\nPress CTRL-C at password prompt(s) to skip. If skipped, you must install the dependencies manually before proceeding\n"
-green "$UPDATE\n$INSTALL curl automake libtool jq ${DEPENDENCY}"
+# Whonix: automake and libtool aren't used by the build. git is needed but was only in the README
+BASE_DEPENDENCY="curl automake libtool jq"
+[[ $DEBIAN ]] && BASE_DEPENDENCY="curl jq git"
+green "$UPDATE\n$INSTALL ${BASE_DEPENDENCY} ${DEPENDENCY}"
 
 # Whonix: skip apt when the template already provides everything. In a Qubes AppVM,
 # packages installed outside /home are lost on reboot
-deps="curl automake libtool jq ${DEPENDENCY/--no-install-recommends/}"
+deps="${BASE_DEPENDENCY} ${DEPENDENCY/--no-install-recommends/}"
 if [[ $DEBIAN ]] && [[ $(dpkg-query -W -f='${db:Status-Abbrev}\n' $deps 2> /dev/null | grep -c '^ii') -eq $(wc -w <<< "$deps") ]]; then
     green "Dependencies already installed"
 else
-    $UPDATE && $INSTALL curl automake libtool jq $DEPENDENCY || echo -e "Skipping dependency installation"
+    $UPDATE && $INSTALL $BASE_DEPENDENCY $DEPENDENCY || echo -e "Skipping dependency installation"
 fi
 ${PIPX_UV:-}
 

@@ -14,6 +14,7 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
 | pip failures are ignored outside Tails | pip failures abort the install |
 | Detects Fedora or Arch on Debian systems that have `dnf` or `pacman` installed | Debian is detected first |
 | Always runs `sudo apt install` | Skipped when the Qubes template already provides the packages (`setup-whonix-template.sh`) |
+| Installs `automake`, `libtool` and `pkg-config` | Not installed; the build doesn't use them |
 | `pipx install uv`, and uv may download a Python build | uv isn't installed, and `UV_PYTHON_DOWNLOADS=never`. The system Python 3.13 is used |
 | Particl seed is shown while typed and printed back | Input is hidden and never printed |
 | Particl seed is passed on the `basicswap-prepare` command line (visible in `ps`) | Passed on stdin with `--particl_mnemonic` (requires BasicSwap >= v0.19.1) |
@@ -40,7 +41,14 @@ jq '.use_tor' ~/coinswaps/basicswap.json   # expected: null (absent) or false
 
 ## Verified update procedure
 
-Stop BasicSwap first. The scripts need bash (Whonix's default shell is zsh), so the
+Stop BasicSwap first. Building needs the build tools; in a Qubes AppVM install them for this
+session only (they are gone after a restart):
+
+```bash
+sudo apt install --no-install-recommends python3-venv libpython3-dev gcc libc6-dev
+```
+
+The scripts need bash (Whonix's default shell is zsh), so the
 verification runs in `bash -c`:
 
 ```bash

@@ -228,8 +228,9 @@ detect_os_arch() {
         INSTALL="sudo apt install -y"
         UPDATE="sudo apt update"
         # Whonix: use the system Python. Don't install uv from PyPI unverified.
-        # Real package names (not pkg-config/libc-dev) so installed packages can be detected
-        DEPENDENCY="python3-venv libpython3-dev gnupg pkgconf gcc libc6-dev --no-install-recommends"
+        # pkg-config isn't used by the build. Real package names (not libc-dev) so
+        # installed packages can be detected
+        DEPENDENCY="python3-venv libpython3-dev gnupg gcc libc6-dev --no-install-recommends"
     else
         red "\nFailed to detect OS. Unsupported or unknown distribution.\nInstall Failed."
         exit
