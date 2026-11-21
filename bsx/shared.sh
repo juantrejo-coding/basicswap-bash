@@ -14,6 +14,14 @@ export BSX_ALLOW_ENV_OVERRIDE=true # required to change the ports
 export py_maj=3
 export py_min=13
 
+# Whonix: BasicSwap core is installed only from a signed release tag
+export BSX_CORE_TAG="${BSX_CORE_TAG:-v0.19.2}"
+export BSX_CORE_SIGNING_FPR=62C74C113CD9E31DAA65564F8ED6D8750C4E3F93
+BSX_CORE_SIGNING_KEY="$(dirname "${BASH_SOURCE[0]}")/keys/basicswap_tecnovert.asc"
+
+# Whonix: never let uv download an unverified Python build
+export UV_PYTHON_DOWNLOADS=never
+
 # Network
 [[ "${1}${2}${3}${4}${5}" == *"regtest"* ]] && export regtest="--regtest"
 
@@ -136,29 +144,14 @@ is_encrypted() {
 }
 
 # Start tor
+# Whonix: the Whonix Gateway provides Tor. A separate Tor daemon is never launched.
 start_tor() {
-    use_tor=$(jq .use_tor $SWAP_DATADIR/basicswap.json)
-    tor_config=$(jq .tor_proxy_port $SWAP_DATADIR/basicswap.json)
+    use_tor=$(jq .use_tor $SWAP_DATADIR/basicswap.json 2> /dev/null)
     if [[ ${use_tor} = true ]]; then
-        [[ ${tor_config} -eq 9050 ]] && bsx-enabletor
-        pid_file="$SWAP_DATADIR/tor/tor.pid"
-        pid() { cat $pid_file; }
-        check_tor() { [[ -f $pid_file ]] && pgrep tor | grep $(pid); }
-        if [[ ! $(check_tor) ]]; then
-            tor -f $SWAP_DATADIR/tor/torrc &> /dev/null &
-            echo $! > $pid_file
-            if [[ $(check_tor) ]]; then
-                green "Started Tor $(pid)"
-            else
-                red "Failed to start tor\nCheck for a conflict on these PIDs\n$(pgrep tor)"
-                exit 1
-            fi
-        else
-            green "Tor running $(pid)"
-        fi
-    else
-        echo "Tor disabled"
+        red "use_tor is enabled in basicswap.json, but a separate Tor daemon is disabled on Whonix.\nRun 'bsx-disabletor' first."
+        return 1
     fi
+    echo "Tor provided by the Whonix Gateway"
 }
 
 # Stop tor
@@ -233,12 +226,56 @@ detect_os_arch() {
         fi
         INSTALL="sudo apt install -y"
         UPDATE="sudo apt update"
-        DEPENDENCY="pipx python3-venv libpython3-dev gnupg pkg-config gcc libc-dev --no-install-recommends"
-        if [[ ! $(type -p uv) ]]; then
-            PIPX_UV="pipx install uv"
-        fi
+        # Whonix: use the system Python. Don't install uv from PyPI unverified
+        DEPENDENCY="python3-venv libpython3-dev gnupg pkg-config gcc libc-dev --no-install-recommends"
     else
         red "\nFailed to detect OS. Unsupported or unknown distribution.\nInstall Failed."
         exit
+    fi
+}
+
+# Whonix: verify a signed BasicSwap release tag and check it out
+# Run from inside the basicswap git checkout
+verify_core_release() {
+    local tag="$1" gnupg verify signer primary
+    if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        red "Invalid BasicSwap release tag: $tag"
+        return 1
+    fi
+    if ! git show-ref --verify --quiet "refs/tags/$tag"; then
+        red "BasicSwap release tag $tag not found"
+        return 1
+    fi
+    if [[ $(git cat-file -t "refs/tags/$tag") != tag ]]; then
+        red "BasicSwap release tag $tag is not an annotated tag"
+        return 1
+    fi
+    # The name inside the signed tag must match, otherwise an older release could be renamed
+    if [[ $(git cat-file tag "$tag" | sed -n 's/^tag //p') != "$tag" ]]; then
+        red "BasicSwap release tag $tag was signed under a different name"
+        return 1
+    fi
+
+    # Isolated keyring holding only the BasicSwap release key
+    gnupg=$(mktemp -d) || return 1
+    GNUPGHOME="$gnupg" gpg --batch --quiet --import "$BSX_CORE_SIGNING_KEY" 2> /dev/null
+    verify=$(GNUPGHOME="$gnupg" git verify-tag --raw "$tag" 2>&1)
+    rm -rf "$gnupg"
+    read -r signer primary <<< "$(awk '$1 == "[GNUPG:]" && $2 == "VALIDSIG" {print toupper($3), toupper($NF); exit}' <<< "$verify")"
+    if ! grep -q '^\[GNUPG:\] GOODSIG ' <<< "$verify" || [[ "$primary" != "$BSX_CORE_SIGNING_FPR" ]]; then
+        echo "$verify"
+        red "BasicSwap release $tag is not signed by $BSX_CORE_SIGNING_FPR"
+        return 1
+    fi
+    green "BasicSwap release $tag signed by $primary"
+
+    git -c advice.detachedHead=false checkout --quiet --detach "$tag" || return 1
+    if [[ $(git rev-parse HEAD) != $(git rev-parse "$tag^{commit}") ]]; then
+        red "BasicSwap checkout does not match release $tag"
+        return 1
+    fi
+    if [[ $(git status --porcelain --untracked-files=no) ]]; then
+        red "BasicSwap checkout has local modifications"
+        return 1
     fi
 }
