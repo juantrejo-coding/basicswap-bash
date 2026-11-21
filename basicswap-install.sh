@@ -52,25 +52,9 @@ $UPDATE && $INSTALL curl automake libtool jq $DEPENDENCY || echo -e "Skipping de
 ${PIPX_UV:-}
 
 # Enable tor
-echo -e "\n[1] Tor ON (requires sudo)\n[2] Tor OFF"
-until [[ "$tor_on" =~ ^[12]$ ]]; do
-    if [[ "$1 $2 $3 $4" == *"tor"* ]]; then
-        tor_on=1
-    else
-        read -p 'Select an option: [1|2]: ' tor_on
-    fi
-    case $tor_on in
-        1)
-            green "BasicSwapDEX will use Tor"
-            ;;
-        2)
-            red "BasicSwapDEX will NOT use Tor"
-            ;;
-        *)
-            red "You must answer 1 or 2"
-            ;;
-    esac
-done
+# Whonix: the Whonix Gateway provides Tor. A separate Tor daemon is never installed or launched
+tor_on=2
+green "\nBasicSwapDEX will use the Whonix Gateway for Tor"
 
 ## Particl restore Seed
 echo -e "\n[1] New Install\n[2] Restore from Particl Seed"
@@ -86,11 +70,12 @@ until [[ "$restore" =~ ^[12]$ ]]; do
             ;;
         2)
             until [[ "$wordcount" = "24" ]]; do
-                read -p $'\nEnter your Particl Seed\n[example: word word word word word...] ' particl_mnemonic
+                read -rsp $'\nEnter your Particl Seed (input hidden)\n[example: word word word word word...] ' particl_mnemonic
+                echo
                 wordcount=$(echo $particl_mnemonic | wc -w)
                 if [[ $wordcount = 24 ]]; then
                     echo -e "Restoring BasicSwapDEX"
-                    green "$particl_mnemonic"
+                    green "24 word Particl Seed entered (hidden)"
                 else
                     red "Try again. Seed must be 24 words"
                 fi
