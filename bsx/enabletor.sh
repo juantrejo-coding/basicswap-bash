@@ -1,24 +1,7 @@
 #!/bin/bash
 source $HOME/.local/bin/bsx/shared.sh
 
-# Detect Operating system
-INSTALL=""
-UPDATE=""
-
-detect_os_arch
-
-# Check for Tor installation
-if type -p tor > /dev/null; then
-    echo -e "\nTor is already installed :)"
-else
-    # Install and configure tor
-    echo "Installing Tor..."
-    $UPDATE
-    $INSTALL tor
-fi
-
-# Enable tor bsx
-basicswap-prepare --datadir=$SWAP_DATADIR --enabletor
-
-# Restart tor
-stop_tor && start_tor
+# Whonix: the Whonix Gateway provides Tor. A separate Tor daemon is never installed or launched
+red "A separate Tor daemon is disabled on Whonix."
+red "The Whonix Gateway provides Tor."
+exit 1
