@@ -201,14 +201,15 @@ detect_os_arch() {
         fi
         DEPENDENCY="python gnupg pkg-config coreutils zeromq"
         green "\n\nDetected MacOS"
-    elif type -p dnf > /dev/null; then
+    # Whonix: a Debian system can have dnf or pacman installed, so check for Debian first
+    elif type -p dnf > /dev/null && [[ ! -f /etc/debian_version ]]; then
         # Fedora
         FEDORA=1
         INSTALL="sudo dnf install -y"
         UPDATE="sudo dnf update -y"
         DEPENDENCY="python3-virtualenv python3-pip python3-devel gnupg2 pkgconf"
         green "\n\nDetected Fedora"
-    elif type -p pacman > /dev/null; then
+    elif type -p pacman > /dev/null && [[ ! -f /etc/debian_version ]]; then
         # Arch Linux
         ARCH=1
         INSTALL="sudo pacman -S --noconfirm --needed"

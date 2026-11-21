@@ -12,6 +12,8 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
 | `setup.sh` runs `git pull` / clones `master` of BasicSwap | Installs only the signed release tag `BSX_CORE_TAG` (default `v0.19.2`), verified against the pinned key `62C74C113CD9E31DAA65564F8ED6D8750C4E3F93` shipped in `bsx/keys/` |
 | `bsx-update` runs `git pull` on both repositories | Disabled. Use the manual procedure below |
 | pip failures are ignored outside Tails | pip failures abort the install |
+| Detects Fedora or Arch on Debian systems that have `dnf` or `pacman` installed | Debian is detected first |
+| Always runs `sudo apt install` | Skipped when the Qubes template already provides the packages (`setup-whonix-template.sh`) |
 | `pipx install uv`, and uv may download a Python build | uv isn't installed, and `UV_PYTHON_DOWNLOADS=never`. The system Python 3.13 is used |
 | Particl seed is shown while typed and printed back | Input is hidden and never printed |
 | Particl seed is passed on the `basicswap-prepare` command line (visible in `ps`) | Passed on stdin with `--particl_mnemonic` (requires BasicSwap >= v0.19.1) |
