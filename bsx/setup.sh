@@ -46,8 +46,9 @@ enable_tor() {
 }
 
 # Whonix: pass the Particl mnemonic on stdin. On the command line it is visible in the process list
-mnemonic="${particl_mnemonic}"
-unset particl_mnemonic
+read -ra words <<< "${particl_mnemonic}"
+mnemonic="${words[*]}"
+unset particl_mnemonic words
 prepare_args=(--datadir="$SWAP_DATADIR" --withcoins=monero --xmrrestoreheight="$xmrrestoreheight")
 [[ $mnemonic ]] && prepare_args+=(--particl_mnemonic)
 # These hold several options each and are split on purpose

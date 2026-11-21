@@ -38,18 +38,23 @@ jq '.use_tor' ~/coinswaps/basicswap.json   # expected: null (absent) or false
 
 ## Verified update procedure
 
-Stop BasicSwap first.
+Stop BasicSwap first. The scripts need bash (Whonix's default shell is zsh), so the
+verification runs in `bash -c`:
 
 ```bash
-source ~/.local/bin/bsx/shared.sh
+bash -c 'source ~/.local/bin/bsx/shared.sh && cd ~/coinswaps/basicswap \
+    && git fetch --tags origin && verify_core_release "$1"' _ vX.Y.Z
+# must print "signed by 62C74C11..." and leave the tag checked out. Continue only if it did:
 cd ~/coinswaps/basicswap
-git fetch --tags origin
-verify_core_release vX.Y.Z    # must print "signed by 62C74C11..." and check out the tag
 ~/coinswaps/venv/bin/pip3 install -r requirements.txt --require-hashes \
     && ~/coinswaps/venv/bin/pip3 install .
 # Optional: coin cores (basicswap-prepare verifies their release signatures)
 ~/coinswaps/venv/bin/basicswap-prepare --datadir=$HOME/coinswaps --upgradecores
 ```
+
+The bundled release key (`bsx/keys/basicswap_tecnovert.asc`) expires on 2029-07-17. After that,
+verification fails until the file is replaced with a refreshed copy of the same key
+(same fingerprint).
 
 To move these scripts to a new upstream release, rebase the `whonix` branch onto the new tag
 and review the conflicts.

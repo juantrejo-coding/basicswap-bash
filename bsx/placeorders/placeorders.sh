@@ -40,7 +40,7 @@ read_number() {
     local value pattern='^[0-9]+([.][0-9]+)?$'
     [[ $3 = signed ]] && pattern='^-?[0-9]+([.][0-9]+)?$'
     until [[ $value =~ $pattern ]]; do
-        read -p "$1" value
+        read -p "$1" value || exit 1
     done
     printf -v "$2" '%s' "$value"
 }
@@ -172,7 +172,7 @@ set_fiat() {
             ;;
         5)
             until [[ $FIAT =~ ^[a-z]{3}$ ]]; do
-                read -p 'Please enter the lowecase 3 character currency code [example: jpy] ' FIAT
+                read -p 'Please enter the lowecase 3 character currency code [example: jpy] ' FIAT || exit 1
             done
             fiat=$FIAT
             ;;

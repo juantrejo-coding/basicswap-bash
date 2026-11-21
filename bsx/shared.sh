@@ -122,11 +122,11 @@ is_encrypted() {
         read -p 'Select an option [1|2]: ' l
         case $l in
             1)
-                until [[ $pass1 ]] && [[ $pass1 = $pass2 ]]; do
+                until [[ $pass1 ]] && [[ "$pass1" = "$pass2" ]]; do
                     read -sp 'Enter your existing BasicSwap encryption password: ' pass1
                     read -sp $'\nRe-enter your BasicSwap encryption password: ' pass2
                     echo
-                    if [[ $pass1 = $pass2 ]]; then
+                    if [[ "$pass1" = "$pass2" ]]; then
                         export WALLET_ENCRYPTION_PWD=$pass1
                     else
                         red "\nThe passwords entered don't match. Try again\n"
