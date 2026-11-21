@@ -2,20 +2,25 @@
 source $HOME/.local/bin/bsx/shared.sh
 
 ## Clone basicswap git
+# Whonix: only install a signed release tag, verified against the pinned release key
 cd $SWAP_DATADIR
-if [[ -d basicswap ]]; then
-    cd $SWAP_DATADIR/basicswap
-    git pull || {
-        red "Failed to pull repo. Installation aborted"
-        exit 1
-    }
-else
+if [[ ! -d basicswap ]]; then
     git clone https://github.com/basicswap/basicswap || {
         red "Failed to clone repo. Please run the installer again"
         exit 1
     }
-    cd $SWAP_DATADIR/basicswap
 fi
+cd $SWAP_DATADIR/basicswap
+if ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
+    git fetch --tags origin || {
+        red "Failed to fetch release tags. Installation aborted"
+        exit 1
+    }
+fi
+verify_core_release "$BSX_CORE_TAG" || {
+    red "BasicSwap release verification failed. Installation aborted"
+    exit 1
+}
 
 ## Install basicswap, coincurve, and pip dependencies
 
@@ -26,14 +31,32 @@ if [[ "${TAILS}" ]]; then
         exit 1
     }
 else
-    $SWAP_DATADIR/venv/bin/pip3 install -r requirements.txt --require-hashes
-    $SWAP_DATADIR/venv/bin/pip3 install .
+    $SWAP_DATADIR/venv/bin/pip3 install -r requirements.txt --require-hashes \
+        && $SWAP_DATADIR/venv/bin/pip3 install . || {
+        red "Installation failed"
+        exit 1
+    }
 fi
 
-# Use Tor if we want
+# Whonix: the Whonix Gateway provides Tor. Never install or enable a separate Tor daemon
 enable_tor() {
     if [[ "$tor_on" = 1 ]]; then
-        $HOME/.local/bin/bsx-enabletor
+        red "A separate Tor daemon is disabled on Whonix"
+    fi
+}
+
+# Whonix: pass the Particl mnemonic on stdin. On the command line it is visible in the process list
+mnemonic="${particl_mnemonic}"
+unset particl_mnemonic
+prepare_args=(--datadir="$SWAP_DATADIR" --withcoins=monero --xmrrestoreheight="$xmrrestoreheight")
+[[ $mnemonic ]] && prepare_args+=(--particl_mnemonic)
+# These hold several options each and are split on purpose
+prepare_args+=(${use_electrum:-} ${add_wow:-} ${regtest:-})
+run_prepare() {
+    if [[ $mnemonic ]]; then
+        printf '%s\n' "$mnemonic" | basicswap-prepare "${prepare_args[@]}"
+    else
+        basicswap-prepare "${prepare_args[@]}"
     fi
 }
 
@@ -42,7 +65,7 @@ tries=1
 [[ $monerod_addr ]] && export XMR_RPC_HOST=$monerod_addr XMR_RPC_PORT=$monerod_port
 [[ $monerod_user ]] && export XMR_RPC_USER=$monerod_user XMR_RPC_PWD=$monerod_pass
 while [[ 1 ]]; do
-    basicswap-prepare --datadir=$SWAP_DATADIR --withcoins=monero --xmrrestoreheight=$xmrrestoreheight ${particl_mnemonic:+"--particl_mnemonic=\"$particl_mnemonic\""} ${use_electrum:-} ${add_wow:-} ${regtest:-} && break || {
+    run_prepare && break || {
         if [[ $tries -lt 3 ]]; then
             red "Attempt ${tries}/3 - Installation failed. Retrying in 2 seconds.."
             sleep 2
@@ -53,10 +76,20 @@ while [[ 1 ]]; do
         fi
     }
 done
+restored=${mnemonic:+1}
+unset mnemonic
+
+# Whonix: BasicSwap must not expect its own Tor daemon
+if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
+    red "use_tor is enabled in basicswap.json. Installation aborted"
+    exit 1
+fi
+
 red "\nMonero wallet restore height is ${xmrrestoreheight}"
-[[ -z $particl_mnemonic ]] && red "\nIMPORTANT!! Make note of your seed (wallet recovery phrase) above!!\n\n"
+[[ -z $restored ]] && red "\nIMPORTANT!! Make note of your seed (wallet recovery phrase) above!!\n\n"
 read -p "Press ENTER to continue. "
 enable_tor
 
-green "Install complete.\n\nUse 'basicswap-bash' to run, 'bsx-update' to update, and 'bsx-addcoin' to add a coin\n"
+green "Install complete.\n\nUse 'basicswap-bash' to run and 'bsx-addcoin' to add a coin\n"
+red "Automatic updates are disabled on Whonix. See WHONIX.md for the verified update procedure"
 red "You may have to logout / login or open a new terminal window for the commands to be detected"
