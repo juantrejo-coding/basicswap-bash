@@ -16,8 +16,8 @@ until [[ "$l" =~ ^[12]$ ]]; do
                 read -sp 'New Client password: ' pass1
                 read -sp $'\nRe-enter Client password: ' pass2
                 if [[ $pass1 == $pass2 ]]; then
-                    CLIENT_AUTH=$pass1
-                    basicswap-prepare --datadir=$SWAP_DATADIR --client-auth-password="${CLIENT_AUTH}"
+                    # Whonix: pass the password on stdin. On the command line it is visible in the process list
+                    printf '%s\n' "$pass1" | basicswap-prepare --datadir=$SWAP_DATADIR --client-auth-password
                     echo -e "\nThe auth is: "
                     green '"admin:<password>"\n\n'
                     echo -e "For the AMM, add: "

@@ -15,6 +15,8 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
 | `pipx install uv`, and uv may download a Python build | uv isn't installed, and `UV_PYTHON_DOWNLOADS=never`. The system Python 3.13 is used |
 | Particl seed is shown while typed and printed back | Input is hidden and never printed |
 | Particl seed is passed on the `basicswap-prepare` command line (visible in `ps`) | Passed on stdin with `--particl_mnemonic` (requires BasicSwap >= v0.19.1) |
+| `bsx-clientauth` passes the web UI password on the command line (visible in `ps`) | Passed on stdin with `--client-auth-password` |
+| `bsx-placeorder` runs the typed amount through `python3 -c` and puts unchecked input into the order JSON | Numeric input only; the amount comparison uses awk |
 
 ## Install
 
