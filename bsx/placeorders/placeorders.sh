@@ -35,6 +35,16 @@ grn2="\e[32;1m"
 nc="printf \e[0m"
 nc2="\e[0m"
 
+# Whonix: only accept numbers. These values end up in awk, sed and the order JSON
+read_number() {
+    local value pattern='^[0-9]+([.][0-9]+)?$'
+    [[ $3 = signed ]] && pattern='^-?[0-9]+([.][0-9]+)?$'
+    until [[ $value =~ $pattern ]]; do
+        read -p "$1" value
+    done
+    printf -v "$2" '%s' "$value"
+}
+
 # Choose Coins
 coin_prompt_buy() {
     THEIR_COIN=$COIN
@@ -161,7 +171,9 @@ set_fiat() {
             echo "AUD"
             ;;
         5)
-            read -p 'Please enter the lowecase 3 character currency code [example: jpy] ' FIAT
+            until [[ $FIAT =~ ^[a-z]{3}$ ]]; do
+                read -p 'Please enter the lowecase 3 character currency code [example: jpy] ' FIAT
+            done
             fiat=$FIAT
             ;;
         *)
@@ -191,19 +203,19 @@ buy_sell() {
         read -p 'Select an option: ' BUYORSELL
         case $BUYORSELL in
             1)
-                read -p $'\nHow much '"$theircapital"' do you want to BUY? [example: 1] ' AMOUNT
+                read_number $'\nHow much '"$theircapital"' do you want to BUY? [example: 1] ' AMOUNT
                 $cy"\nRate you will pay:\n"
                 $nc
                 printf "\n[1] CUSTOM: Specific Crypto Rate $red2$yourcoin$nc2/$grn2$theircoin$nc2\n[2] CUSTOM: $red2$TAKER_RATE $yourcoin$nc2/$grn2$theircoin $cy2+/- CUSTOM Percent$nc2\n[3] PRESET: $red2$TAKER_RATE $yourcoin$nc2/$grn2$theircoin$nc2\n[4] PRESET: $red2$TAKER_RATE $yourcoin$nc2/$grn2$theircoin $cy2+ $PERCENT%%$nc2\n[ENTER] FIAT: Enter a $cy2$FIAT$nc2 rate to pay\n\n"
                 read -p 'Select an option: ' RATESEL
                 case $RATESEL in
                     1)
-                        read -p $"At what rate would you like to Pay? [example: $TAKER_RATE] " RATE
+                        read_number $"At what rate would you like to Pay? [example: $TAKER_RATE] " RATE
                         PRICE=$(echo $YOUR_FIAT $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         PERCENT=0
                         ;;
                     2)
-                        read -p 'Pay this much % above or below market [example: [0.5|-0.5] ' PERCENT
+                        read_number 'Pay this much % above or below market [example: [0.5|-0.5] ' PERCENT signed
                         RATE=$(echo $TAKER_RATE $PERCENT | awk '{ printf "%.8f\n", ( $1 * ( $2 / 100 + 1 ))}')
                         PRICE=$(echo $YOUR_FIAT * $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         ;;
@@ -217,7 +229,7 @@ buy_sell() {
                         PRICE=$(echo $YOUR_FIAT $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         ;;
                     *)
-                        read -p $"Enter specific price in $FIAT to PAY? [example: "$THEIR_FIAT"] " PRICE
+                        read_number $"Enter specific price in $FIAT to PAY? [example: "$THEIR_FIAT"] " PRICE
                         RATE=$(echo $PRICE $YOUR_FIAT | awk '{ printf "%.8f\n", $1 / $2 }')
                         PERCENT=0
                         ;;
@@ -227,19 +239,19 @@ buy_sell() {
                 printf "Rate to be paid: $grn2$MAKER_RATE $theircoin$nc2/$red2$yourcoin$nc2\n\n"
                 ;;
             2)
-                read -p $'\nHow much YOUR '"$yourcapital"' do you want to SELL [example: 1] ' AMOUNT
+                read_number $'\nHow much YOUR '"$yourcapital"' do you want to SELL [example: 1] ' AMOUNT
                 $cy"\nRate to charge:\n"
                 $nc
                 printf "\n[1] CUSTOM: Specific Crypto Rate $grn2$theircoin$nc2/$red2$yourcoin$nc2\n[2] CUSTOM: $grn2$MAKER_RATE $theircoin$nc2/$red2$yourcoin $cy2+/- CUSTOM Percent$nc2\n[3] PRESET: $grn2$MAKER_RATE $theircoin$nc2/$red2$yourcoin$nc2\n[4] PRESET: $grn2$MAKER_RATE $theircoin$nc2/$red2$yourcoin $cy2+ $PERCENT%%$nc2\n[ENTER] FIAT: Enter a $cy2$FIAT$nc2 rate to charge\n\n"
                 read -p 'Select an option: ' RATESEL
                 case $RATESEL in
                     1)
-                        read -p $"Enter specific rate to Charge? [example: $MAKER_RATE] " RATE
+                        read_number $"Enter specific rate to Charge? [example: $MAKER_RATE] " RATE
                         PRICE=$(echo $THEIR_FIAT $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         PERCENT=0
                         ;;
                     2)
-                        read -p 'Charge this much percent above market [example: [0.5 or -0.5] ] ' PERCENT
+                        read_number 'Charge this much percent above market [example: [0.5 or -0.5] ] ' PERCENT signed
                         RATE=$(echo $MAKER_RATE $PERCENT | awk '{ printf "%.8f\n", ( $1 * ( $2 / 100 + 1 ))}')
                         PRICE=$(echo $THEIR_FIAT $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         ;;
@@ -253,7 +265,7 @@ buy_sell() {
                         PRICE=$(echo $THEIR_FIAT $RATE | awk '{ printf "%.2f\n", $1 * $2 }')
                         ;;
                     *)
-                        read -p $"Enter specific price in $FIAT to Charge? [example: "$YOUR_FIAT"] " PRICE
+                        read_number $"Enter specific price in $FIAT to Charge? [example: "$YOUR_FIAT"] " PRICE
                         RATE=$(echo $PRICE $THEIR_FIAT | awk '{ printf "%.8f\n", $1 / $2 }')
                         PERCENT=0
                         ;;
@@ -329,7 +341,8 @@ check_bids() {
     revert_config
     apply_config
     FOUNDBID=$(python3 createoffers.py --configfile $taker --statefile $state --port=$PORT --oneshot --debug | grep "New bid")
-    POSTOFFER=$(python3 -c "print($OB_AMOUNT < $OB_MIN)")
+    # Whonix: compare in awk. python3 -c ran the typed amount as code
+    POSTOFFER=$(awk -v a="$OB_AMOUNT" -v b="$OB_MIN" 'BEGIN { print (a + 0 < b + 0) ? "True" : "False" }')
     if [[ $FOUNDBID ]]; then
         $grn"Placed bid successfully! Check BasicSwapDEX to confirm\n"
         $nc
