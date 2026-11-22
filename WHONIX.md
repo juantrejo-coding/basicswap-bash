@@ -18,6 +18,7 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
 | `pipx install uv`, and uv may download a Python build | uv isn't installed, and `UV_PYTHON_DOWNLOADS=never`. The system Python 3.13 is used |
 | Particl seed is shown while typed and printed back | Input is hidden and never printed |
 | Particl seed is passed on the `basicswap-prepare` command line (visible in `ps`) | Passed on stdin with `--particl_mnemonic` (requires BasicSwap >= v0.19.1) |
+| Monero remote node option: 15 s check, node always trusted, RPC password on the `curl` command line | Clearer option, default port, 60 s check for Tor/onion, nodes you don't run are set `trusted_daemon = false`, password passed to `curl` on stdin |
 | `bsx-clientauth` passes the web UI password on the command line (visible in `ps`) | Passed on stdin with `--client-auth-password` |
 | `bsx-placeorder` runs the typed amount through `python3 -c` and puts unchecked input into the order JSON | Numeric input only; the amount comparison uses awk |
 

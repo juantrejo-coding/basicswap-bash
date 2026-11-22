@@ -173,7 +173,8 @@ until [[ "$wownero" =~ ^[12]$ ]]; do
 done
 
 ## Configure Monero
-echo -e "\n[1] Connect to a Monero node\n[2] Allow BasicSwapDEX to run a Monero node (+90GB)"
+# Whonix: make the remote node option clearer
+echo -e "\n[1] Use a remote Monero node (no blockchain download)\n[2] Allow BasicSwapDEX to run a Monero node (+90GB)"
 until [[ "$node" =~ ^[12]$ ]]; do
     if [[ "$1 $2 $3 $4" == *"internal"* ]]; then
         node=2
@@ -182,9 +183,15 @@ until [[ "$node" =~ ^[12]$ ]]; do
     fi
     case $node in
         1)
+            echo -e "\nYour own node is best. A public node works too; prefer a .onion address."
+            echo "The node sees your wallet's requests and transactions. Whonix hides your IP."
             until [[ $checknode ]]; do
-                read -p 'Enter Address of Monero node [example: 192.168.1.123] ' monerod_addr
-                read -p 'Enter RPC Port for the Monero node [example: 18081] ' monerod_port
+                monerod_addr=""
+                until [[ $monerod_addr =~ ^[A-Za-z0-9.-]+$ ]]; do
+                    read -p 'Enter Address of Monero node [example: 192.168.1.123 or xxxx.onion] ' monerod_addr
+                done
+                read -p 'Enter RPC Port for the Monero node [default: 18081] ' monerod_port
+                monerod_port=${monerod_port:-18081}
                 read -p $'\nDoes this Monero node require authentication? [y/N] ' xmr_pass
 
                 if [[ "${xmr_pass}" =~ ^[yY]$ ]]; then
@@ -198,7 +205,18 @@ until [[ "$node" =~ ^[12]$ ]]; do
                     done
                 fi
 
-                checknode=$(timeout 15s curl -sk ${monerod_user:+-u $monerod_user:$monerod_pass --digest} http://$monerod_addr:$monerod_port/get_info | jq .height)
+                # Whonix: longer timeout for Tor and onion services. Credentials go to curl
+                # on stdin, not the command line where the process list shows them
+                green "Checking the node (up to 60 seconds over Tor)..."
+                curl_auth=""
+                if [[ $monerod_user ]]; then
+                    curl_auth="$monerod_user:$monerod_pass"
+                    curl_auth=${curl_auth//\\/\\\\}
+                    curl_auth="user = \"${curl_auth//\"/\\\"}\""
+                fi
+                checknode=$(printf '%s' "$curl_auth" \
+                    | timeout 60s curl -sk --config - ${monerod_user:+--digest} "http://$monerod_addr:$monerod_port/get_info" \
+                    | jq -e '.height // empty' 2> /dev/null)
                 if [[ $checknode ]]; then
                     green "\nSuccessfully connected to the XMR node @ $monerod_addr:$monerod_port"
                 else
@@ -206,6 +224,11 @@ until [[ "$node" =~ ^[12]$ ]]; do
                 fi
 
             done
+            read -p $'\nDo you run this node yourself? [y/N] ' own_node
+            if [[ ! "${own_node}" =~ ^[yY]$ ]]; then
+                xmr_untrusted=1
+                green "The wallet won't trust this node"
+            fi
             if [[ -z $xmrrestoreheight ]]; then
                 xmrrestoreheight="${checknode}"
             fi
@@ -277,6 +300,7 @@ export monerod_pass="${monerod_pass}"
 export particl_mnemonic="${particl_mnemonic}"
 export xmrrestoreheight="${xmrrestoreheight}"
 export tor_on="${tor_on}"
+export xmr_untrusted="${xmr_untrusted}"
 export TAILS="${TAILS}"
 export MACOS="${MACOS}"
 

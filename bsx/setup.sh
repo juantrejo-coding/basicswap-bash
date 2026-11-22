@@ -80,6 +80,16 @@ done
 restored=${mnemonic:+1}
 unset mnemonic
 
+# Whonix: don't trust a Monero node the user doesn't run. Set in the config because
+# basicswap-prepare --trustremotenode=false is parsed as true
+if [[ $xmr_untrusted ]]; then
+    jq '.chainclients.monero.trusted_daemon = false' $SWAP_DATADIR/basicswap.json > $SWAP_DATADIR/basicswap.json.tmp \
+        && mv $SWAP_DATADIR/basicswap.json.tmp $SWAP_DATADIR/basicswap.json || {
+        red "Failed to set the Monero node as untrusted. Installation aborted"
+        exit 1
+    }
+fi
+
 # Whonix: BasicSwap must not expect its own Tor daemon
 if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
     red "use_tor is enabled in basicswap.json. Installation aborted"
