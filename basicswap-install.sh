@@ -250,7 +250,8 @@ if [[ -z $trasherdk ]]; then
         echo "export $addpath" | tee -a $HOME/.bashrc
     fi
     # Zsh
-    if [[ -f $HOME/.zshrc ]]; then
+    # Whonix: zsh is the default shell, so add it even when there's no .zshrc yet
+    if [[ -f $HOME/.zshrc ]] || [[ $SHELL == *"zsh"* ]]; then
         echo "export $addpath" | tee -a $HOME/.zshrc
     fi
     # xfce4
