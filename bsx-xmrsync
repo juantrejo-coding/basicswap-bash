@@ -1,0 +1,41 @@
+#!/bin/bash
+source $HOME/.local/bin/bsx/shared.sh
+
+# Whonix: show the Monero node's sync progress. Read-only; BasicSwap keeps running
+
+is_tails
+config="$SWAP_DATADIR/basicswap.json"
+if [[ ! -f $config ]]; then
+    red "BasicSwap isn't installed: $config not found"
+    exit 1
+fi
+
+if [[ $(jq -r '.chainclients.monero.manage_daemon' "$config") = false ]]; then
+    host=$(jq -r '.chainclients.monero.rpchost' "$config")
+    port=$(jq -r '.chainclients.monero.rpcport' "$config")
+    green "Monero uses the remote node $host:$port. Nothing is downloaded here."
+    height=$(timeout 60s curl -s "http://$host:$port/get_info" | jq -r '.height // empty')
+    if [[ $height ]]; then
+        green "Remote node height: $height"
+    else
+        red "The remote node isn't reachable"
+    fi
+    exit
+fi
+
+datadir=$(jq -r '.chainclients.monero.datadir' "$config")
+log="$datadir/bitmonero.log"
+[[ -f $log ]] || log="$datadir/core_stdout.log"
+if ! pgrep -x monerod > /dev/null; then
+    red "The Monero node isn't running. Start BasicSwap with 'basicswap-bash' first."
+    exit 1
+fi
+
+green "Watching Monero sync progress. Ctrl+C stops watching; BasicSwap keeps running."
+echo "Lines look like: Synced <downloaded>/<network height> (<percent>%, <blocks> left)"
+echo "No lines yet means the node is still finding peers. This can take minutes over Tor."
+echo
+tail -n 500 -F "$log" 2> /dev/null \
+    | sed -u 's/\x1b\[[0-9;]*m//g' \
+    | grep --line-buffered -E 'Synced [0-9]+/[0-9]+|You are now synchronized|SYNCHRONIZED OK' \
+    | sed -u -E 's/^([0-9-]+ [0-9:]+)\.[0-9]+\s.*\s(Synced .*|You are now synchronized.*|.*SYNCHRONIZED OK.*)$/\1  \2/'
