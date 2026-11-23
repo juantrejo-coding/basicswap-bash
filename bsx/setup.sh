@@ -5,14 +5,14 @@ source $HOME/.local/bin/bsx/shared.sh
 # Whonix: only install a signed release tag, verified against the pinned release key
 cd $SWAP_DATADIR
 if [[ ! -d basicswap ]]; then
-    git clone https://github.com/basicswap/basicswap || {
+    retry git clone https://github.com/basicswap/basicswap || {
         red "Failed to clone repo. Please run the installer again"
         exit 1
     }
 fi
 cd $SWAP_DATADIR/basicswap
 if ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
-    git fetch --tags origin || {
+    retry git fetch --tags origin || {
         red "Failed to fetch release tags. Installation aborted"
         exit 1
     }

@@ -237,6 +237,18 @@ detect_os_arch() {
     fi
 }
 
+# Whonix: retry a network command. Tor circuits sometimes fail briefly
+retry() {
+    local tries
+    for tries in 1 2 3 4; do
+        "$@" && return 0
+        [[ $tries -lt 4 ]] || break
+        red "Attempt ${tries}/4 failed. Tor may be busy; retrying in 15 seconds.."
+        sleep 15
+    done
+    return 1
+}
+
 # Whonix: verify a signed BasicSwap release tag and check it out
 # Run from inside the basicswap git checkout
 verify_core_release() {
