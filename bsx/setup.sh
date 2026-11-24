@@ -90,6 +90,13 @@ if [[ $xmr_untrusted ]]; then
     }
 fi
 
+# Whonix: nobody can connect in to a Workstation behind Tor, so don't offer this
+# Monero node to peers as a connection target
+if [[ $(jq -r '.chainclients.monero.manage_daemon' $SWAP_DATADIR/basicswap.json) != false ]]; then
+    xmr_conf="$(jq -r '.chainclients.monero.datadir' $SWAP_DATADIR/basicswap.json)/monerod.conf"
+    grep -qx 'hide-my-port=1' "$xmr_conf" || echo 'hide-my-port=1' >> "$xmr_conf"
+fi
+
 # Whonix: BasicSwap must not expect its own Tor daemon
 if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
     red "use_tor is enabled in basicswap.json. Installation aborted"
