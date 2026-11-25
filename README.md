@@ -16,6 +16,44 @@ Get the files from the `installer` branch of
 No separate key file or fork is needed. The changes are described in `WHONIX.md` in the
 installed source directory (`~/basicswap-whonix-src/WHONIX.md`).
 
+## Verify a release
+
+Releases are signed tags `installer-v1`, `installer-v2`, … with a signed checksum file. The
+signing key is:
+
+```
+93F4 433D CE56 353B D7E6  9D42 CBFE 4123 CF41 21FA
+Juan Trejo <juantrejo_coding@proton.me>
+```
+
+Check this fingerprint against a second source, not just this README: someone able to change
+this repository could change both. The key is also published at
+`https://github.com/juantrejo-coding.gpg`.
+
+Download the release files (replace `installer-v1` with the latest release tag):
+
+```bash
+r=https://raw.githubusercontent.com/juantrejo-coding/basicswap-bash/installer-v1
+curl -sSfLO "$r/install-whonix-basicswap.sh"
+curl -sSfLO "$r/setup-whonix-template.sh"
+curl -sSfLO "$r/SHA256SUMS"
+curl -sSfLO "$r/SHA256SUMS.asc"
+```
+
+Verify them:
+
+```bash
+curl -sSf https://github.com/juantrejo-coding.gpg | gpg --import
+gpg --fingerprint 93F4433DCE56353BD7E69D42CBFE4123CF4121FA   # compare with the fingerprint above
+gpg --verify SHA256SUMS.asc SHA256SUMS    # must say: Good signature from "Juan Trejo ..."
+sha256sum -c SHA256SUMS                   # both files must say OK
+```
+
+gpg may also warn that the key "is not certified with a trusted signature". That's normal; the
+fingerprint check is what matters. With git: `git verify-tag installer-v1`.
+
+Copy only files that passed these checks to the template and the AppVM.
+
 ## Install
 
 Two scripts, run in two qubes:
@@ -49,7 +87,7 @@ In the template:
 
 ```bash
 cd ~/QubesIncoming/*/
-sha256sum setup-whonix-template.sh      # compare with the checksum you recorded
+sha256sum -c SHA256SUMS --ignore-missing   # after verifying SHA256SUMS, see 'Verify a release'
 bash setup-whonix-template.sh           # uses sudo; installs only the missing packages via apt
 ```
 
@@ -96,7 +134,7 @@ In the AppVM, check the file and run it as your ordinary user (not root):
 
 ```bash
 cd ~/QubesIncoming/*/
-sha256sum install-whonix-basicswap.sh   # compare with the checksum you recorded
+sha256sum -c SHA256SUMS --ignore-missing   # after verifying SHA256SUMS, see 'Verify a release'
 chmod +x install-whonix-basicswap.sh
 ./install-whonix-basicswap.sh
 ```
@@ -393,7 +431,10 @@ git worktree add ../basicswap-bash-whonix whonix   # to edit the patches
 
 # after committing changes on the whonix branch:
 ./make-installer.sh
-sha256sum install-whonix-basicswap.sh
+
+# sign a release (in a terminal; asks for the key's passphrase), then push it:
+./sign-release.sh <n>
+git push github installer installer-v<n>
 
 # move to a new upstream release:
 git remote add upstream https://github.com/nahuhh/basicswap-bash.git
@@ -408,3 +449,5 @@ git -C ../basicswap-bash-whonix rebase --onto <newtag> v0.19.1 whonix
 | `setup-whonix-template.sh` | Installs the packages in the Whonix Workstation template (hand-written; keep its list in sync with `PACKAGES` in `installer.template.sh` and `DEPENDENCY` in `bsx/shared.sh`) |
 | `installer.template.sh` | Installer source; patches and pins are filled in by `make-installer.sh` |
 | `make-installer.sh` | Builds the installer from the `whonix` branch |
+| `sign-release.sh` | Signs a release: `SHA256SUMS`, `SHA256SUMS.asc` and the tag `installer-v<n>` |
+| `SHA256SUMS`, `SHA256SUMS.asc` | Checksums of the two scripts and their signature, for the current release |
