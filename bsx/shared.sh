@@ -14,8 +14,11 @@ export BSX_ALLOW_ENV_OVERRIDE=true # required to change the ports
 export py_maj=3
 export py_min=13
 
-# Whonix: BasicSwap core is installed only from a signed release tag
-export BSX_CORE_TAG="${BSX_CORE_TAG:-v0.19.2}"
+# Whonix: BasicSwap core is installed only from a signed release tag. Empty means the
+# newest release; set BSX_CORE_TAG=vX.Y.Z to choose one. Older than the minimum lacks
+# features these scripts use (the Particl mnemonic on stdin)
+export BSX_CORE_TAG="${BSX_CORE_TAG:-}"
+export BSX_CORE_MIN_TAG=v0.19.1
 export BSX_CORE_SIGNING_FPR=62C74C113CD9E31DAA65564F8ED6D8750C4E3F93
 BSX_CORE_SIGNING_KEY="$(dirname "${BASH_SOURCE[0]}")/keys/basicswap_tecnovert.asc"
 
@@ -249,12 +252,21 @@ retry() {
     return 1
 }
 
+# Whonix: print the newest release tag (vX.Y.Z, no pre-releases) in the basicswap checkout
+newest_core_tag() {
+    git tag --list 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1
+}
+
 # Whonix: verify a signed BasicSwap release tag and check it out
 # Run from inside the basicswap git checkout
 verify_core_release() {
     local tag="$1" gnupg verify signer primary
     if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         red "Invalid BasicSwap release tag: $tag"
+        return 1
+    fi
+    if [[ $(printf '%s\n' "$BSX_CORE_MIN_TAG" "$tag" | sort -V | head -n 1) != "$BSX_CORE_MIN_TAG" ]]; then
+        red "BasicSwap $tag is older than $BSX_CORE_MIN_TAG, which these scripts need"
         return 1
     fi
     if ! git show-ref --verify --quiet "refs/tags/$tag"; then

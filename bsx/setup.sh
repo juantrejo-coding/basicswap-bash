@@ -11,13 +11,20 @@ if [[ ! -d basicswap ]]; then
     }
 fi
 cd $SWAP_DATADIR/basicswap
-if ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
+if [[ -z $BSX_CORE_TAG ]] || ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
     retry git fetch --tags origin || {
         red "Failed to fetch release tags. Installation aborted"
         exit 1
     }
 fi
+# The newest release must verify. Never fall back to an older one: a fake newer tag would
+# otherwise quietly downgrade the install
+if [[ -z $BSX_CORE_TAG ]]; then
+    BSX_CORE_TAG=$(newest_core_tag)
+    green "Newest BasicSwap release: ${BSX_CORE_TAG:-none found}"
+fi
 verify_core_release "$BSX_CORE_TAG" || {
+    red "If this release can't be verified, install a specific one: BSX_CORE_TAG=vX.Y.Z"
     red "BasicSwap release verification failed. Installation aborted"
     exit 1
 }

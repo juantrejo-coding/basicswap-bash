@@ -9,7 +9,7 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
 | --- | --- |
 | Installer asks whether to install and run Tor | Tor is always OFF in BasicSwap; the Whonix Gateway provides Tor |
 | `bsx-enabletor`, `start_tor` launch a local Tor daemon | Disabled. `start_tor` refuses to run while `use_tor` is true |
-| `setup.sh` runs `git pull` / clones `master` of BasicSwap | Installs only the signed release tag `BSX_CORE_TAG` (default `v0.19.2`), verified against the pinned key `62C74C113CD9E31DAA65564F8ED6D8750C4E3F93` shipped in `bsx/keys/` |
+| `setup.sh` runs `git pull` / clones `master` of BasicSwap | Installs only a signed release: the newest one (at least `v0.19.1`), or `BSX_CORE_TAG`, verified against the pinned key `62C74C113CD9E31DAA65564F8ED6D8750C4E3F93` shipped in `bsx/keys/` |
 | `bsx-update` runs `git pull` on both repositories | Disabled. Use the manual procedure below |
 | pip failures are ignored outside Tails | pip failures abort the install |
 | Detects Fedora or Arch on Debian systems that have `dnf` or `pacman` installed | Debian is detected first |
@@ -31,7 +31,9 @@ cd basicswap-bash-whonix
 ./basicswap-install.sh
 ```
 
-To install a different signed release, set `BSX_CORE_TAG=vX.Y.Z` before running the installer.
+This installs the newest signed BasicSwap release. If the newest release fails verification,
+the install stops; it never falls back to an older one. To install a specific signed release
+(at least `v0.19.1`), set `BSX_CORE_TAG=vX.Y.Z` before running the installer.
 
 ## Verify an install
 
