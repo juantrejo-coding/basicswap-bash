@@ -6,8 +6,10 @@
    and stops unless it is exactly commit `94a86da564d3b7f08da702392c5e16c4b8879d1b`.
 2. Applies the Whonix patches embedded in the script and stops unless the result matches
    the reviewed tree exactly.
-3. Runs the original installer with those changes. It installs BasicSwap only from the
-   release tag v0.19.2 signed by `62C7 4C11 3CD9 E31D AA65 564F 8ED6 D875 0C4E 3F93`.
+3. Runs the original installer with those changes. It installs the newest BasicSwap release
+   (at least v0.19.1), and only if it is signed by
+   `62C7 4C11 3CD9 E31D AA65 564F 8ED6 D875 0C4E 3F93`. If the newest release fails
+   verification it stops; it never falls back to an older release.
 4. Checks the finished install: signed release checked out and BasicSwap's Tor off.
 
 Get the files from the `installer` branch of
@@ -163,7 +165,10 @@ agent); keep the wallet AppVM for BasicSwap.
 There is no Tor question. BasicSwap's own Tor is always off; the Whonix Gateway provides Tor.
 The original installer's arguments skip prompts, e.g. `./install-whonix-basicswap.sh new electrum`.
 
-To install a different release signed by the same key: `BSX_CORE_TAG=v0.19.x ./install-whonix-basicswap.sh`
+To install a specific release signed by the same key instead of the newest:
+`BSX_CORE_TAG=vX.Y.Z ./install-whonix-basicswap.sh` (at least v0.19.1). These scripts were
+tested with v0.19.2; if a newer release breaks the install, `BSX_CORE_TAG=v0.19.2` gets the
+tested version.
 
 Downloads are retried up to 4 times, because Tor circuits sometimes fail briefly. If it still
 stops part way, run it again; a new Tor circuit can help (Tor Control Panel on the Gateway: New
@@ -195,7 +200,7 @@ take minutes over Tor. With a remote node it shows that node's height instead.
 Check the install:
 
 ```bash
-cd ~/coinswaps/basicswap && git describe --tags --exact-match   # v0.19.2
+cd ~/coinswaps/basicswap && git describe --tags --exact-match   # the release installed
 jq .use_tor ~/coinswaps/basicswap.json                          # null or false
 ```
 

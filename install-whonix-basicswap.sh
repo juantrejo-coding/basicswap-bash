@@ -17,7 +17,7 @@ umask 077
 HELPER_REPO="https://github.com/nahuhh/basicswap-bash.git"
 HELPER_TAG="v0.19.1"
 HELPER_COMMIT="94a86da564d3b7f08da702392c5e16c4b8879d1b"
-PATCHED_TREE="6a1fe7a7a47c9cc2f433fcafad6f61435f52ebca"
+PATCHED_TREE="41638ac53298156cb3b6d5846aca3717781f4c4c"
 
 HELPER_DIR="${HELPER_DIR:-$HOME/basicswap-whonix-src}"
 SWAP_DATADIR="$HOME/coinswaps"
@@ -218,7 +218,7 @@ exit 0
 From 13854ff73c28dc6a562e08eea1879fab49ce7fd8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 01/18] whonix: verify signed BasicSwap releases, disable local
+Subject: [PATCH 01/19] whonix: verify signed BasicSwap releases, disable local
  Tor daemon
 
 Add verify_core_release(), which checks a release tag against the pinned
@@ -408,7 +408,7 @@ index 6d512e1..bfe39f3 100755
 From bf7fbb20306b69c9ff80f32cb57e5cd888132777 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 02/18] whonix: install only the verified BasicSwap release
+Subject: [PATCH 02/19] whonix: install only the verified BasicSwap release
 
 Replace the unverified git pull / clone of master with the signed
 BSX_CORE_TAG release, abort when pip fails, and pass the Particl mnemonic
@@ -528,7 +528,7 @@ index 69cc0f6..4bc2506 100755
 From e350ad049f558d27b4315222573223f2b43f47b0 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 03/18] whonix: force BasicSwap Tor off and hide the Particl
+Subject: [PATCH 03/19] whonix: force BasicSwap Tor off and hide the Particl
  seed
 
 ---
@@ -587,7 +587,7 @@ index 922525a..a4ba97f 100755
 From e1f7e915b3c174dc2b383e3c0f9ad5f07d6b05bf Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 04/18] whonix: disable unverified updates and the Tor
+Subject: [PATCH 04/19] whonix: disable unverified updates and the Tor
  installer
 
 ---
@@ -767,7 +767,7 @@ index b425151..09c194d 100755
 From ca8c9fe24e0a27a1962ec3472100ea2a9b9637a6 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 05/18] whonix: document the changes and verified update
+Subject: [PATCH 05/19] whonix: document the changes and verified update
  procedure
 
 ---
@@ -838,7 +838,7 @@ index 0000000..a55c3d0
 From ea5b75720920d2c477c9f2338b02fc91aa43a9cf Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 23:53:46 -0500
-Subject: [PATCH 06/18] whonix: keep the client auth password off the command
+Subject: [PATCH 06/19] whonix: keep the client auth password off the command
  line
 
 ---
@@ -878,7 +878,7 @@ index 3954a33..a9c6e2f 100755
 From 455779bc3543b6e57984e445ee04d98b856db528 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 23:53:46 -0500
-Subject: [PATCH 07/18] whonix: accept only numbers in placeorders
+Subject: [PATCH 07/19] whonix: accept only numbers in placeorders
 
 The sell amount was run as code by python3 -c, and the typed values were
 substituted unchecked into the order JSON with sed.
@@ -996,7 +996,7 @@ index 41d7f28..549016d 100755
 From 89d3eb811ba7f5982516384cb5765ac11ae4ccc8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 00:46:31 -0500
-Subject: [PATCH 08/18] whonix: fixes from review
+Subject: [PATCH 08/19] whonix: fixes from review
 
 Normalise spacing in the Particl seed, quote password confirmations (an
 unquoted == operand is a glob pattern), stop placeorders prompts at end of
@@ -1119,7 +1119,7 @@ index bfe39f3..cb2fc59 100755
 From 50063bd328cf57e6bcba203f8833a68cc6400307 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:01:47 -0500
-Subject: [PATCH 09/18] whonix: skip apt when the Qubes template provides the
+Subject: [PATCH 09/19] whonix: skip apt when the Qubes template provides the
  dependencies
 
 Packages installed in a Qubes AppVM outside /home are lost on reboot, so
@@ -1170,7 +1170,7 @@ index cb2fc59..77d1012 100755
 From b21817009779e30c1cc80424741bca0a42316850 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:06:19 -0500
-Subject: [PATCH 10/18] whonix: detect Debian before Fedora and Arch
+Subject: [PATCH 10/19] whonix: detect Debian before Fedora and Arch
 
 A Debian system with dnf installed was detected as Fedora, so the
 dependency step ran dnf instead of apt.
@@ -1218,7 +1218,7 @@ index 77d1012..95dcddb 100755
 From e654542ba5d057585d026bdfe55b445d12ee4ee6 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:25:31 -0500
-Subject: [PATCH 11/18] whonix: install only the packages the build uses
+Subject: [PATCH 11/19] whonix: install only the packages the build uses
 
 coincurve builds without automake, libtool and pkg-config. Add git, which
 upstream only lists in its README.
@@ -1302,7 +1302,7 @@ index 95dcddb..562de13 100755
 From e89185f54113aad639101a3a1961bd8ed39913aa Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 02:53:13 -0500
-Subject: [PATCH 12/18] whonix: update procedure needs no sudo; the template
+Subject: [PATCH 12/19] whonix: update procedure needs no sudo; the template
  provides the build tools
 
 ---
@@ -1343,7 +1343,7 @@ index eeb2e62..008aa6f 100644
 From 1ebd864085000006b35881c8244e59cfa16519b9 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 03:01:32 -0500
-Subject: [PATCH 13/18] whonix: print the apt command only when it runs
+Subject: [PATCH 13/19] whonix: print the apt command only when it runs
 
 ---
  basicswap-install.sh | 2 +-
@@ -1373,7 +1373,7 @@ index 03629e9..fe037c5 100755
 From 454a6f7fafcb37035833f269f327bb5515a95ee5 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sun, 22 Nov 2026 02:40:29 -0500
-Subject: [PATCH 14/18] whonix: add ~/.local/bin to PATH for zsh users without
+Subject: [PATCH 14/19] whonix: add ~/.local/bin to PATH for zsh users without
  a .zshrc
 
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -1399,7 +1399,7 @@ index fe037c5..277e35e 100755
 From 7369878a21731c264f1cd9ad4d62a1951b65229b Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sun, 22 Nov 2026 02:46:52 -0500
-Subject: [PATCH 15/18] whonix: clearer Monero remote node option
+Subject: [PATCH 15/19] whonix: clearer Monero remote node option
 
 Default port, a 60 second check for Tor and onion nodes, the RPC password
 passed to curl on stdin, and nodes the user doesn't run set as untrusted.
@@ -1522,7 +1522,7 @@ index a3a1874..de76ac9 100755
 From 9d71ce62a0539fac83dbfe5ff8e6f04518d9f54e Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 00:37:21 -0500
-Subject: [PATCH 16/18] whonix: add bsx-xmrsync to show Monero sync progress
+Subject: [PATCH 16/19] whonix: add bsx-xmrsync to show Monero sync progress
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ---
@@ -1594,7 +1594,7 @@ index 0000000..1cab064
 From b5bf98b0540d0aceec8c5f21dfb7e085a9c499c8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 01:06:44 -0500
-Subject: [PATCH 17/18] whonix: retry git downloads; Tor circuits sometimes
+Subject: [PATCH 17/19] whonix: retry git downloads; Tor circuits sometimes
  fail briefly
 
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -1651,7 +1651,7 @@ index 562de13..1b6e8eb 100755
 From bb9569bf360d5be05d31e77edc3ed6f9389ccc72 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 20:43:47 -0500
-Subject: [PATCH 18/18] whonix: hide the Monero node's port from peers
+Subject: [PATCH 18/19] whonix: hide the Monero node's port from peers
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ---
@@ -1689,4 +1689,113 @@ index 0fb27b9..15b5e9f 100755
  # Whonix: BasicSwap must not expect its own Tor daemon
  if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
      red "use_tor is enabled in basicswap.json. Installation aborted"
+
+From 2d63ee8ce793c5ae6084f2580ed1bdbafa1dd351 Mon Sep 17 00:00:00 2001
+From: BasicSwap Whonix <whonix@localhost>
+Date: Wed, 25 Nov 2026 15:21:52 -0500
+Subject: [PATCH 19/19] whonix: install the newest signed BasicSwap release by
+ default
+
+BSX_CORE_TAG still selects a specific release. Releases older than
+v0.19.1 are refused (no Particl mnemonic on stdin), and if the newest
+release fails verification the install stops instead of falling back.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+---
+ WHONIX.md     |  6 ++++--
+ bsx/setup.sh  |  9 ++++++++-
+ bsx/shared.sh | 16 ++++++++++++++--
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/WHONIX.md b/WHONIX.md
+index 559d250..2faf1a1 100644
+--- a/WHONIX.md
++++ b/WHONIX.md
+@@ -9,7 +9,7 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
+ | --- | --- |
+ | Installer asks whether to install and run Tor | Tor is always OFF in BasicSwap; the Whonix Gateway provides Tor |
+ | `bsx-enabletor`, `start_tor` launch a local Tor daemon | Disabled. `start_tor` refuses to run while `use_tor` is true |
+-| `setup.sh` runs `git pull` / clones `master` of BasicSwap | Installs only the signed release tag `BSX_CORE_TAG` (default `v0.19.2`), verified against the pinned key `62C74C113CD9E31DAA65564F8ED6D8750C4E3F93` shipped in `bsx/keys/` |
++| `setup.sh` runs `git pull` / clones `master` of BasicSwap | Installs only a signed release: the newest one (at least `v0.19.1`), or `BSX_CORE_TAG`, verified against the pinned key `62C74C113CD9E31DAA65564F8ED6D8750C4E3F93` shipped in `bsx/keys/` |
+ | `bsx-update` runs `git pull` on both repositories | Disabled. Use the manual procedure below |
+ | pip failures are ignored outside Tails | pip failures abort the install |
+ | Detects Fedora or Arch on Debian systems that have `dnf` or `pacman` installed | Debian is detected first |
+@@ -31,7 +31,9 @@ cd basicswap-bash-whonix
+ ./basicswap-install.sh
+ ```
+ 
+-To install a different signed release, set `BSX_CORE_TAG=vX.Y.Z` before running the installer.
++This installs the newest signed BasicSwap release. If the newest release fails verification,
++the install stops; it never falls back to an older one. To install a specific signed release
++(at least `v0.19.1`), set `BSX_CORE_TAG=vX.Y.Z` before running the installer.
+ 
+ ## Verify an install
+ 
+diff --git a/bsx/setup.sh b/bsx/setup.sh
+index 15b5e9f..150dc51 100755
+--- a/bsx/setup.sh
++++ b/bsx/setup.sh
+@@ -11,13 +11,20 @@ if [[ ! -d basicswap ]]; then
+     }
+ fi
+ cd $SWAP_DATADIR/basicswap
+-if ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
++if [[ -z $BSX_CORE_TAG ]] || ! git show-ref --verify --quiet "refs/tags/$BSX_CORE_TAG"; then
+     retry git fetch --tags origin || {
+         red "Failed to fetch release tags. Installation aborted"
+         exit 1
+     }
+ fi
++# The newest release must verify. Never fall back to an older one: a fake newer tag would
++# otherwise quietly downgrade the install
++if [[ -z $BSX_CORE_TAG ]]; then
++    BSX_CORE_TAG=$(newest_core_tag)
++    green "Newest BasicSwap release: ${BSX_CORE_TAG:-none found}"
++fi
+ verify_core_release "$BSX_CORE_TAG" || {
++    red "If this release can't be verified, install a specific one: BSX_CORE_TAG=vX.Y.Z"
+     red "BasicSwap release verification failed. Installation aborted"
+     exit 1
+ }
+diff --git a/bsx/shared.sh b/bsx/shared.sh
+index 1b6e8eb..067b5bf 100755
+--- a/bsx/shared.sh
++++ b/bsx/shared.sh
+@@ -14,8 +14,11 @@ export BSX_ALLOW_ENV_OVERRIDE=true # required to change the ports
+ export py_maj=3
+ export py_min=13
+ 
+-# Whonix: BasicSwap core is installed only from a signed release tag
+-export BSX_CORE_TAG="${BSX_CORE_TAG:-v0.19.2}"
++# Whonix: BasicSwap core is installed only from a signed release tag. Empty means the
++# newest release; set BSX_CORE_TAG=vX.Y.Z to choose one. Older than the minimum lacks
++# features these scripts use (the Particl mnemonic on stdin)
++export BSX_CORE_TAG="${BSX_CORE_TAG:-}"
++export BSX_CORE_MIN_TAG=v0.19.1
+ export BSX_CORE_SIGNING_FPR=62C74C113CD9E31DAA65564F8ED6D8750C4E3F93
+ BSX_CORE_SIGNING_KEY="$(dirname "${BASH_SOURCE[0]}")/keys/basicswap_tecnovert.asc"
+ 
+@@ -249,6 +252,11 @@ retry() {
+     return 1
+ }
+ 
++# Whonix: print the newest release tag (vX.Y.Z, no pre-releases) in the basicswap checkout
++newest_core_tag() {
++    git tag --list 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1
++}
++
+ # Whonix: verify a signed BasicSwap release tag and check it out
+ # Run from inside the basicswap git checkout
+ verify_core_release() {
+@@ -257,6 +265,10 @@ verify_core_release() {
+         red "Invalid BasicSwap release tag: $tag"
+         return 1
+     fi
++    if [[ $(printf '%s\n' "$BSX_CORE_MIN_TAG" "$tag" | sort -V | head -n 1) != "$BSX_CORE_MIN_TAG" ]]; then
++        red "BasicSwap $tag is older than $BSX_CORE_MIN_TAG, which these scripts need"
++        return 1
++    fi
+     if ! git show-ref --verify --quiet "refs/tags/$tag"; then
+         red "BasicSwap release tag $tag not found"
+         return 1
 __WHONIX_PATCHES__

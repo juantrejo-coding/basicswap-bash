@@ -41,7 +41,7 @@ gpg --verify SHA256SUMS.asc SHA256SUMS
 
 whonix=$(git rev-parse whonix)
 upstream=$(sed -n 's/^HELPER_TAG="\(.*\)"$/\1/p' install-whonix-basicswap.sh)
-core=$(sed -n 's/^export BSX_CORE_TAG="\${BSX_CORE_TAG:-\(.*\)}"$/\1/p' <(git show whonix:bsx/shared.sh))
+core_min=$(sed -n 's/^export BSX_CORE_MIN_TAG=\(.*\)$/\1/p' <(git show whonix:bsx/shared.sh))
 
 git add SHA256SUMS SHA256SUMS.asc
 git -c user.name="$SIGNER_NAME" -c user.email="$SIGNER_EMAIL" \
@@ -51,7 +51,7 @@ git -c user.name="$SIGNER_NAME" -c user.email="$SIGNER_EMAIL" \
 $tag
 
 basicswap-bash $upstream + Whonix patches (whonix branch $whonix)
-BasicSwap core: $core
+BasicSwap core: newest signed release, at least $core_min
 
 $(cat SHA256SUMS)
 EOF
