@@ -27,8 +27,10 @@ Juan Trejo <juantrejo_coding@proton.me>
 ```
 
 Check this fingerprint against a second source, not just this README: someone able to change
-this repository could change both. The key is also published at
-`https://github.com/juantrejo-coding.gpg`.
+this repository could change both. The key is published in two independent places:
+
+- `https://github.com/juantrejo-coding.gpg`
+- keys.openpgp.org: `gpg --keyserver hkps://keys.openpgp.org --recv-keys 93F4433DCE56353BD7E69D42CBFE4123CF4121FA`
 
 Download the release files (replace `installer-v1` with the latest release tag):
 
@@ -44,6 +46,7 @@ Verify them:
 
 ```bash
 curl -sSf https://github.com/juantrejo-coding.gpg | gpg --import
+# or: gpg --keyserver hkps://keys.openpgp.org --recv-keys 93F4433DCE56353BD7E69D42CBFE4123CF4121FA
 gpg --fingerprint 93F4433DCE56353BD7E69D42CBFE4123CF4121FA   # compare with the fingerprint above
 gpg --verify SHA256SUMS.asc SHA256SUMS    # must say: Good signature from "Juan Trejo ..."
 sha256sum -c SHA256SUMS                   # both files must say OK
