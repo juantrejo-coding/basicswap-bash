@@ -34,10 +34,11 @@ this repository could change both. The key is published in two independent place
 - `https://github.com/juantrejo-coding.gpg`
 - keys.openpgp.org: `gpg --keyserver hkps://keys.openpgp.org --recv-keys 93F4433DCE56353BD7E69D42CBFE4123CF4121FA`
 
-Download the release files (replace `installer-v1` with the latest release tag):
+Download the release files. The latest release is `installer-v3`; check the repository's tags
+for a newer one and use that instead:
 
 ```bash
-r=https://raw.githubusercontent.com/juantrejo-coding/basicswap-bash/installer-v1
+r=https://raw.githubusercontent.com/juantrejo-coding/basicswap-bash/installer-v3
 curl -sSfLO "$r/install-whonix-basicswap.sh"
 curl -sSfLO "$r/setup-whonix-template.sh"
 curl -sSfLO "$r/SHA256SUMS"
@@ -55,7 +56,7 @@ sha256sum -c SHA256SUMS                   # both files must say OK
 ```
 
 gpg may also warn that the key "is not certified with a trusted signature". That's normal; the
-fingerprint check is what matters. With git: `git verify-tag installer-v1`.
+fingerprint check is what matters. With git: `git verify-tag installer-v3`.
 
 Copy only files that passed these checks to the template and the AppVM.
 
