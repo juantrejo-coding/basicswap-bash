@@ -12,7 +12,10 @@
    verification it stops; it never falls back to an older release.
 4. Checks the finished install: signed release checked out and BasicSwap's Tor off.
 
-Get the files from the `installer` branch of
+Download the files from the
+[latest release](https://github.com/juantrejo-coding/basicswap-bash/releases/latest), and verify
+them as described in [Verify a release](#verify-a-release). The source is the `installer` and
+`whonix` branches of
 [juantrejo-coding/basicswap-bash](https://github.com/juantrejo-coding/basicswap-bash/tree/installer).
 
 No separate key file or fork is needed. The changes are described in `WHONIX.md` in the
@@ -34,11 +37,12 @@ this repository could change both. The key is published in two independent place
 - `https://github.com/juantrejo-coding.gpg`
 - keys.openpgp.org: `gpg --keyserver hkps://keys.openpgp.org --recv-keys 93F4433DCE56353BD7E69D42CBFE4123CF4121FA`
 
-Download the release files. The latest release is `installer-v3`; check the repository's tags
-for a newer one and use that instead:
+Download the four files from the
+[latest release](https://github.com/juantrejo-coding/basicswap-bash/releases/latest) page, or
+with `curl`:
 
 ```bash
-r=https://raw.githubusercontent.com/juantrejo-coding/basicswap-bash/installer-v3
+r=https://github.com/juantrejo-coding/basicswap-bash/releases/latest/download
 curl -sSfLO "$r/install-whonix-basicswap.sh"
 curl -sSfLO "$r/setup-whonix-template.sh"
 curl -sSfLO "$r/SHA256SUMS"
@@ -56,7 +60,9 @@ sha256sum -c SHA256SUMS                   # both files must say OK
 ```
 
 gpg may also warn that the key "is not certified with a trusted signature". That's normal; the
-fingerprint check is what matters. With git: `git verify-tag installer-v3`.
+fingerprint check is what matters. For a specific release instead of the latest, use
+`r=https://github.com/juantrejo-coding/basicswap-bash/releases/download/installer-v3`. With git:
+`git verify-tag installer-v3`.
 
 Copy only files that passed these checks to the template and the AppVM.
 
