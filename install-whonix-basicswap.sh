@@ -17,7 +17,7 @@ umask 077
 HELPER_REPO="https://github.com/nahuhh/basicswap-bash.git"
 HELPER_TAG="v0.19.1"
 HELPER_COMMIT="94a86da564d3b7f08da702392c5e16c4b8879d1b"
-PATCHED_TREE="41638ac53298156cb3b6d5846aca3717781f4c4c"
+PATCHED_TREE="18b8a97e362cf21d1f174ff2deef00370de0bc15"
 
 HELPER_DIR="${HELPER_DIR:-$HOME/basicswap-whonix-src}"
 SWAP_DATADIR="$HOME/coinswaps"
@@ -181,6 +181,12 @@ cat << 'EOF'
 Next steps
 ================================================
 
+0. BACKUP. The Particl recovery phrase shown during the install is the
+   backup for ALL your BasicSwap wallets, including Monero: BasicSwap
+   creates the Monero wallet from it, so there is no separate Monero seed.
+   Write it down with the Monero restore height, even if you don't care
+   about Particl. 'bsx-xmrkeys' shows the Monero keys if you need them.
+
 1. Start BasicSwap. Open a NEW terminal (this one doesn't have the new
    commands yet) and run:
        basicswap-bash
@@ -218,7 +224,7 @@ exit 0
 From 13854ff73c28dc6a562e08eea1879fab49ce7fd8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 01/19] whonix: verify signed BasicSwap releases, disable local
+Subject: [PATCH 01/20] whonix: verify signed BasicSwap releases, disable local
  Tor daemon
 
 Add verify_core_release(), which checks a release tag against the pinned
@@ -408,7 +414,7 @@ index 6d512e1..bfe39f3 100755
 From bf7fbb20306b69c9ff80f32cb57e5cd888132777 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 02/19] whonix: install only the verified BasicSwap release
+Subject: [PATCH 02/20] whonix: install only the verified BasicSwap release
 
 Replace the unverified git pull / clone of master with the signed
 BSX_CORE_TAG release, abort when pip fails, and pass the Particl mnemonic
@@ -528,7 +534,7 @@ index 69cc0f6..4bc2506 100755
 From e350ad049f558d27b4315222573223f2b43f47b0 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 03/19] whonix: force BasicSwap Tor off and hide the Particl
+Subject: [PATCH 03/20] whonix: force BasicSwap Tor off and hide the Particl
  seed
 
 ---
@@ -587,7 +593,7 @@ index 922525a..a4ba97f 100755
 From e1f7e915b3c174dc2b383e3c0f9ad5f07d6b05bf Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 04/19] whonix: disable unverified updates and the Tor
+Subject: [PATCH 04/20] whonix: disable unverified updates and the Tor
  installer
 
 ---
@@ -767,7 +773,7 @@ index b425151..09c194d 100755
 From ca8c9fe24e0a27a1962ec3472100ea2a9b9637a6 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 22:08:07 -0500
-Subject: [PATCH 05/19] whonix: document the changes and verified update
+Subject: [PATCH 05/20] whonix: document the changes and verified update
  procedure
 
 ---
@@ -838,7 +844,7 @@ index 0000000..a55c3d0
 From ea5b75720920d2c477c9f2338b02fc91aa43a9cf Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 23:53:46 -0500
-Subject: [PATCH 06/19] whonix: keep the client auth password off the command
+Subject: [PATCH 06/20] whonix: keep the client auth password off the command
  line
 
 ---
@@ -878,7 +884,7 @@ index 3954a33..a9c6e2f 100755
 From 455779bc3543b6e57984e445ee04d98b856db528 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Fri, 20 Nov 2026 23:53:46 -0500
-Subject: [PATCH 07/19] whonix: accept only numbers in placeorders
+Subject: [PATCH 07/20] whonix: accept only numbers in placeorders
 
 The sell amount was run as code by python3 -c, and the typed values were
 substituted unchecked into the order JSON with sed.
@@ -996,7 +1002,7 @@ index 41d7f28..549016d 100755
 From 89d3eb811ba7f5982516384cb5765ac11ae4ccc8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 00:46:31 -0500
-Subject: [PATCH 08/19] whonix: fixes from review
+Subject: [PATCH 08/20] whonix: fixes from review
 
 Normalise spacing in the Particl seed, quote password confirmations (an
 unquoted == operand is a glob pattern), stop placeorders prompts at end of
@@ -1119,7 +1125,7 @@ index bfe39f3..cb2fc59 100755
 From 50063bd328cf57e6bcba203f8833a68cc6400307 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:01:47 -0500
-Subject: [PATCH 09/19] whonix: skip apt when the Qubes template provides the
+Subject: [PATCH 09/20] whonix: skip apt when the Qubes template provides the
  dependencies
 
 Packages installed in a Qubes AppVM outside /home are lost on reboot, so
@@ -1170,7 +1176,7 @@ index cb2fc59..77d1012 100755
 From b21817009779e30c1cc80424741bca0a42316850 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:06:19 -0500
-Subject: [PATCH 10/19] whonix: detect Debian before Fedora and Arch
+Subject: [PATCH 10/20] whonix: detect Debian before Fedora and Arch
 
 A Debian system with dnf installed was detected as Fedora, so the
 dependency step ran dnf instead of apt.
@@ -1218,7 +1224,7 @@ index 77d1012..95dcddb 100755
 From e654542ba5d057585d026bdfe55b445d12ee4ee6 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 01:25:31 -0500
-Subject: [PATCH 11/19] whonix: install only the packages the build uses
+Subject: [PATCH 11/20] whonix: install only the packages the build uses
 
 coincurve builds without automake, libtool and pkg-config. Add git, which
 upstream only lists in its README.
@@ -1302,7 +1308,7 @@ index 95dcddb..562de13 100755
 From e89185f54113aad639101a3a1961bd8ed39913aa Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 02:53:13 -0500
-Subject: [PATCH 12/19] whonix: update procedure needs no sudo; the template
+Subject: [PATCH 12/20] whonix: update procedure needs no sudo; the template
  provides the build tools
 
 ---
@@ -1343,7 +1349,7 @@ index eeb2e62..008aa6f 100644
 From 1ebd864085000006b35881c8244e59cfa16519b9 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sat, 21 Nov 2026 03:01:32 -0500
-Subject: [PATCH 13/19] whonix: print the apt command only when it runs
+Subject: [PATCH 13/20] whonix: print the apt command only when it runs
 
 ---
  basicswap-install.sh | 2 +-
@@ -1373,7 +1379,7 @@ index 03629e9..fe037c5 100755
 From 454a6f7fafcb37035833f269f327bb5515a95ee5 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sun, 22 Nov 2026 02:40:29 -0500
-Subject: [PATCH 14/19] whonix: add ~/.local/bin to PATH for zsh users without
+Subject: [PATCH 14/20] whonix: add ~/.local/bin to PATH for zsh users without
  a .zshrc
 
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -1399,7 +1405,7 @@ index fe037c5..277e35e 100755
 From 7369878a21731c264f1cd9ad4d62a1951b65229b Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Sun, 22 Nov 2026 02:46:52 -0500
-Subject: [PATCH 15/19] whonix: clearer Monero remote node option
+Subject: [PATCH 15/20] whonix: clearer Monero remote node option
 
 Default port, a 60 second check for Tor and onion nodes, the RPC password
 passed to curl on stdin, and nodes the user doesn't run set as untrusted.
@@ -1522,7 +1528,7 @@ index a3a1874..de76ac9 100755
 From 9d71ce62a0539fac83dbfe5ff8e6f04518d9f54e Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 00:37:21 -0500
-Subject: [PATCH 16/19] whonix: add bsx-xmrsync to show Monero sync progress
+Subject: [PATCH 16/20] whonix: add bsx-xmrsync to show Monero sync progress
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ---
@@ -1594,7 +1600,7 @@ index 0000000..1cab064
 From b5bf98b0540d0aceec8c5f21dfb7e085a9c499c8 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 01:06:44 -0500
-Subject: [PATCH 17/19] whonix: retry git downloads; Tor circuits sometimes
+Subject: [PATCH 17/20] whonix: retry git downloads; Tor circuits sometimes
  fail briefly
 
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -1651,7 +1657,7 @@ index 562de13..1b6e8eb 100755
 From bb9569bf360d5be05d31e77edc3ed6f9389ccc72 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Mon, 23 Nov 2026 20:43:47 -0500
-Subject: [PATCH 18/19] whonix: hide the Monero node's port from peers
+Subject: [PATCH 18/20] whonix: hide the Monero node's port from peers
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ---
@@ -1693,7 +1699,7 @@ index 0fb27b9..15b5e9f 100755
 From 2d63ee8ce793c5ae6084f2580ed1bdbafa1dd351 Mon Sep 17 00:00:00 2001
 From: BasicSwap Whonix <whonix@localhost>
 Date: Wed, 25 Nov 2026 15:21:52 -0500
-Subject: [PATCH 19/19] whonix: install the newest signed BasicSwap release by
+Subject: [PATCH 19/20] whonix: install the newest signed BasicSwap release by
  default
 
 BSX_CORE_TAG still selects a specific release. Releases older than
@@ -1798,4 +1804,146 @@ index 1b6e8eb..067b5bf 100755
      if ! git show-ref --verify --quiet "refs/tags/$tag"; then
          red "BasicSwap release tag $tag not found"
          return 1
+
+From 2c0a6c5aeea9391066acc43f332c1d1fa03e7a04 Mon Sep 17 00:00:00 2001
+From: BasicSwap Whonix <whonix@localhost>
+Date: Thu, 26 Nov 2026 01:29:00 -0500
+Subject: [PATCH 20/20] whonix: explain that the Particl phrase backs up
+ Monero; add bsx-xmrkeys
+
+BasicSwap derives the Monero view and spend keys from the Particl master
+key, so there is no Monero seed and Monero reports the wallet as
+non-deterministic. Say so where the phrase is shown, so it isn't skipped
+by people who only care about Monero, and add bsx-xmrkeys to show the
+Monero keys for restoring in another Monero wallet.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+---
+ WHONIX.md            |  1 +
+ basicswap-install.sh |  2 ++
+ bsx-xmrkeys          | 61 ++++++++++++++++++++++++++++++++++++++++++++
+ bsx/setup.sh         | 17 +++++++++++-
+ 4 files changed, 80 insertions(+), 1 deletion(-)
+ create mode 100755 bsx-xmrkeys
+
+diff --git a/WHONIX.md b/WHONIX.md
+index 2faf1a1..ca14184 100644
+--- a/WHONIX.md
++++ b/WHONIX.md
+@@ -20,6 +20,7 @@ Every change is marked with a `# Whonix:` comment, and `git log v0.19.1..whonix`
+ | Particl seed is passed on the `basicswap-prepare` command line (visible in `ps`) | Passed on stdin with `--particl_mnemonic` (requires BasicSwap >= v0.19.1) |
+ | Monero remote node option: 15 s check, node always trusted, RPC password on the `curl` command line | Clearer option, default port, 60 s check for Tor/onion, nodes you don't run are set `trusted_daemon = false`, password passed to `curl` on stdin |
+ | Monero node offers itself to peers as a connection target | `hide-my-port=1` in `monerod.conf`; nobody can connect in through Tor anyway |
++| Particl recovery phrase shown with no hint that it is also the Monero backup; no way to see the Monero wallet's keys | Installer explains that the phrase backs up every wallet, including Monero (no separate Monero seed exists); `bsx-xmrkeys` shows the Monero address, view and spend keys |
+ | No way to see the Monero node's sync progress | `bsx-xmrsync` follows the node's log and shows `Synced <downloaded>/<height>` lines (or the remote node's height) |
+ | `bsx-clientauth` passes the web UI password on the command line (visible in `ps`) | Passed on stdin with `--client-auth-password` |
+ | `bsx-placeorder` runs the typed amount through `python3 -c` and puts unchecked input into the order JSON | Numeric input only; the amount comparison uses awk |
+diff --git a/basicswap-install.sh b/basicswap-install.sh
+index 4f17334..992e061 100755
+--- a/basicswap-install.sh
++++ b/basicswap-install.sh
+@@ -68,6 +68,8 @@ green "\nBasicSwapDEX will use the Whonix Gateway for Tor"
+ 
+ ## Particl restore Seed
+ echo -e "\n[1] New Install\n[2] Restore from Particl Seed"
++# Whonix: say why the Particl phrase matters even to people who only want Monero
++echo "The Particl recovery phrase is the backup for ALL BasicSwap wallets, including Monero."
+ until [[ "$restore" =~ ^[12]$ ]]; do
+     if [[ "$1 $2 $3 $4" == *"new"* ]]; then
+         restore=1
+diff --git a/bsx-xmrkeys b/bsx-xmrkeys
+new file mode 100755
+index 0000000..b17d14d
+--- /dev/null
++++ b/bsx-xmrkeys
+@@ -0,0 +1,61 @@
++#!/bin/bash
++source $HOME/.local/bin/bsx/shared.sh
++
++# Whonix: show the Monero wallet's keys. BasicSwap derives the Monero view and spend keys
++# from the Particl master key, so the wallet has no 25-word Monero seed. The keys let
++# the wallet be restored in another Monero wallet ("restore from keys")
++
++is_tails
++config="$SWAP_DATADIR/basicswap.json"
++conf="$SWAP_DATADIR/monero/monero_wallet.conf"
++if [[ ! -f $config || ! -f $conf ]]; then
++    red "BasicSwap with Monero isn't installed in $SWAP_DATADIR"
++    exit 1
++fi
++
++echo "BasicSwap has no separate Monero seed. It creates the Monero wallet from keys derived"
++echo "from your Particl recovery phrase, so that phrase is the backup for your Monero too."
++echo "Monero itself can't show a 25-word seed for such a wallet."
++echo
++echo "This shows the Monero address, view key and spend key, to restore the wallet in"
++echo "another Monero wallet (Monero GUI, Feather: \"restore from keys\")."
++echo
++red "****************************************************************"
++red "WARNING: the spend key gives full control of your Monero."
++red "Anyone who sees it can take your funds. Make sure nobody can see"
++red "your screen. Never paste it online, into a chat or into a file."
++red "****************************************************************"
++echo
++read -p "Show the keys? Type yes: " answer
++[[ $answer == yes ]] || { echo "Not shown."; exit 1; }
++
++port=$(sed -n 's/^rpc-bind-port=//p' "$conf")
++login=$(sed -n 's/^rpc-login=//p' "$conf")
++# Credentials go to curl on stdin, not the command line where the process list shows them
++xmr_rpc() {
++    printf 'user = "%s"\n' "$login" \
++        | curl -s --max-time 60 --config - --digest "http://127.0.0.1:$port/json_rpc" \
++            -d "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"$1\",\"params\":$2}"
++}
++
++address=$(xmr_rpc get_address '{"account_index":0}' | jq -r '.result.address // empty')
++if [[ -z $address ]]; then
++    red "Can't reach the Monero wallet. Start BasicSwap with 'basicswap-bash' first, and"
++    red "unlock it in the web UI if you set a wallet password."
++    exit 1
++fi
++view_key=$(xmr_rpc query_key '{"key_type":"view_key"}' | jq -r '.result.key // empty')
++spend_key=$(xmr_rpc query_key '{"key_type":"spend_key"}' | jq -r '.result.key // empty')
++if [[ -z $view_key || -z $spend_key ]]; then
++    red "The Monero wallet didn't return its keys. If you set a wallet password, unlock it"
++    red "in the web UI first."
++    exit 1
++fi
++
++echo
++echo "Address:        $address"
++echo "View key:       $view_key"
++echo "Spend key:      $spend_key"
++echo "Restore height: $(jq -r '.chainclients.monero.restore_height' "$config")"
++echo
++echo "Clear the screen when done: clear"
+diff --git a/bsx/setup.sh b/bsx/setup.sh
+index 150dc51..3bff728 100755
+--- a/bsx/setup.sh
++++ b/bsx/setup.sh
+@@ -111,7 +111,22 @@ if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
+ fi
+ 
+ red "\nMonero wallet restore height is ${xmrrestoreheight}"
+-[[ -z $restored ]] && red "\nIMPORTANT!! Make note of your seed (wallet recovery phrase) above!!\n\n"
++# Whonix: the Particl phrase is the backup for every wallet, including Monero. Say so plainly
++if [[ -z $restored ]]; then
++    red "\nIMPORTANT!! Write down the recovery phrase shown above (\"Save your particl wallet recovery phrase\")."
++    red "It is NOT only for Particl. It is the backup for ALL your BasicSwap wallets,"
++    red "including Monero. Even if you don't care about Particl, you need this phrase."
++    echo "BasicSwap has no separate Monero seed: it creates the Monero wallet from keys derived"
++    echo "from this phrase, so Monero can't show a 25-word seed for it. If you lose the phrase,"
++    echo "your Monero can't be recovered. To restore, you need the phrase and the Monero restore"
++    echo "height above."
++    echo "To use the Monero wallet in another Monero wallet app, 'bsx-xmrkeys' shows its keys."
++    echo
++else
++    echo -e "\nYour Particl recovery phrase also restores the Monero wallet; BasicSwap derives it"
++    echo "from that phrase. 'bsx-xmrkeys' shows the Monero keys if you need them elsewhere."
++    echo
++fi
+ read -p "Press ENTER to continue. "
+ enable_tor
+ 
 __WHONIX_PATCHES__

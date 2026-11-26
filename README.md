@@ -156,6 +156,28 @@ It prints "Dependencies already installed" and never calls sudo.
 Don't run it in the AppVM that also runs other untrusted software (for example an AI coding
 agent); keep the wallet AppVM for BasicSwap.
 
+### Back up the Particl recovery phrase, even for Monero
+
+A new install prints a Particl recovery phrase. **It is the backup for all your BasicSwap
+wallets, including Monero**, so write it down even if you don't care about Particl.
+
+BasicSwap has no separate Monero seed. It derives the Monero wallet's view key and spend key
+from the Particl phrase and builds the wallet from those keys. A 25-word Monero seed only exists
+when the view key is computed from the spend key; here both are derived separately, so Monero
+calls the wallet "non-deterministic" and can't show a seed for it.
+
+To restore, you need:
+
+- the Particl recovery phrase: restoring it in BasicSwap recreates the same Monero wallet
+- the Monero restore height, printed at the end of the install (without it, the wallet scans
+  from an early default height: slower, but it finds everything)
+
+To use the Monero funds in another Monero wallet (Monero GUI or Feather, "restore from keys"),
+start BasicSwap and run `bsx-xmrkeys`. It shows the address, view key, spend key and restore
+height. **The spend key gives full control of the funds**: make sure nobody can see your
+screen, and never paste it online or keep it in a file. If you set a wallet password, unlock
+it in the web UI first.
+
 ### Questions it asks
 
 - New install, or restore from a Particl seed. Seed input is hidden. A new install prints

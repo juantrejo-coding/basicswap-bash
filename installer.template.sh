@@ -181,6 +181,12 @@ cat << 'EOF'
 Next steps
 ================================================
 
+0. BACKUP. The Particl recovery phrase shown during the install is the
+   backup for ALL your BasicSwap wallets, including Monero: BasicSwap
+   creates the Monero wallet from it, so there is no separate Monero seed.
+   Write it down with the Monero restore height, even if you don't care
+   about Particl. 'bsx-xmrkeys' shows the Monero keys if you need them.
+
 1. Start BasicSwap. Open a NEW terminal (this one doesn't have the new
    commands yet) and run:
        basicswap-bash
