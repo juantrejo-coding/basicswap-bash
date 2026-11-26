@@ -68,6 +68,8 @@ green "\nBasicSwapDEX will use the Whonix Gateway for Tor"
 
 ## Particl restore Seed
 echo -e "\n[1] New Install\n[2] Restore from Particl Seed"
+# Whonix: say why the Particl phrase matters even to people who only want Monero
+echo "The Particl recovery phrase is the backup for ALL BasicSwap wallets, including Monero."
 until [[ "$restore" =~ ^[12]$ ]]; do
     if [[ "$1 $2 $3 $4" == *"new"* ]]; then
         restore=1

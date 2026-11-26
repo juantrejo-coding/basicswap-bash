@@ -111,7 +111,22 @@ if [[ $(jq .use_tor $SWAP_DATADIR/basicswap.json) = true ]]; then
 fi
 
 red "\nMonero wallet restore height is ${xmrrestoreheight}"
-[[ -z $restored ]] && red "\nIMPORTANT!! Make note of your seed (wallet recovery phrase) above!!\n\n"
+# Whonix: the Particl phrase is the backup for every wallet, including Monero. Say so plainly
+if [[ -z $restored ]]; then
+    red "\nIMPORTANT!! Write down the recovery phrase shown above (\"Save your particl wallet recovery phrase\")."
+    red "It is NOT only for Particl. It is the backup for ALL your BasicSwap wallets,"
+    red "including Monero. Even if you don't care about Particl, you need this phrase."
+    echo "BasicSwap has no separate Monero seed: it creates the Monero wallet from keys derived"
+    echo "from this phrase, so Monero can't show a 25-word seed for it. If you lose the phrase,"
+    echo "your Monero can't be recovered. To restore, you need the phrase and the Monero restore"
+    echo "height above."
+    echo "To use the Monero wallet in another Monero wallet app, 'bsx-xmrkeys' shows its keys."
+    echo
+else
+    echo -e "\nYour Particl recovery phrase also restores the Monero wallet; BasicSwap derives it"
+    echo "from that phrase. 'bsx-xmrkeys' shows the Monero keys if you need them elsewhere."
+    echo
+fi
 read -p "Press ENTER to continue. "
 enable_tor
 

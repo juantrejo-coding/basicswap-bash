@@ -1,0 +1,61 @@
+#!/bin/bash
+source $HOME/.local/bin/bsx/shared.sh
+
+# Whonix: show the Monero wallet's keys. BasicSwap derives the Monero view and spend keys
+# from the Particl master key, so the wallet has no 25-word Monero seed. The keys let
+# the wallet be restored in another Monero wallet ("restore from keys")
+
+is_tails
+config="$SWAP_DATADIR/basicswap.json"
+conf="$SWAP_DATADIR/monero/monero_wallet.conf"
+if [[ ! -f $config || ! -f $conf ]]; then
+    red "BasicSwap with Monero isn't installed in $SWAP_DATADIR"
+    exit 1
+fi
+
+echo "BasicSwap has no separate Monero seed. It creates the Monero wallet from keys derived"
+echo "from your Particl recovery phrase, so that phrase is the backup for your Monero too."
+echo "Monero itself can't show a 25-word seed for such a wallet."
+echo
+echo "This shows the Monero address, view key and spend key, to restore the wallet in"
+echo "another Monero wallet (Monero GUI, Feather: \"restore from keys\")."
+echo
+red "****************************************************************"
+red "WARNING: the spend key gives full control of your Monero."
+red "Anyone who sees it can take your funds. Make sure nobody can see"
+red "your screen. Never paste it online, into a chat or into a file."
+red "****************************************************************"
+echo
+read -p "Show the keys? Type yes: " answer
+[[ $answer == yes ]] || { echo "Not shown."; exit 1; }
+
+port=$(sed -n 's/^rpc-bind-port=//p' "$conf")
+login=$(sed -n 's/^rpc-login=//p' "$conf")
+# Credentials go to curl on stdin, not the command line where the process list shows them
+xmr_rpc() {
+    printf 'user = "%s"\n' "$login" \
+        | curl -s --max-time 60 --config - --digest "http://127.0.0.1:$port/json_rpc" \
+            -d "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"$1\",\"params\":$2}"
+}
+
+address=$(xmr_rpc get_address '{"account_index":0}' | jq -r '.result.address // empty')
+if [[ -z $address ]]; then
+    red "Can't reach the Monero wallet. Start BasicSwap with 'basicswap-bash' first, and"
+    red "unlock it in the web UI if you set a wallet password."
+    exit 1
+fi
+view_key=$(xmr_rpc query_key '{"key_type":"view_key"}' | jq -r '.result.key // empty')
+spend_key=$(xmr_rpc query_key '{"key_type":"spend_key"}' | jq -r '.result.key // empty')
+if [[ -z $view_key || -z $spend_key ]]; then
+    red "The Monero wallet didn't return its keys. If you set a wallet password, unlock it"
+    red "in the web UI first."
+    exit 1
+fi
+
+echo
+echo "Address:        $address"
+echo "View key:       $view_key"
+echo "Spend key:      $spend_key"
+echo "Restore height: $(jq -r '.chainclients.monero.restore_height' "$config")"
+echo
+echo "Clear the screen when done: clear"
